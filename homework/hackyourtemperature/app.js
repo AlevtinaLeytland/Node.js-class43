@@ -20,11 +20,12 @@ app.get(path.root, (req, res) => {
 app.post(path.weather, async (req, res) => {
   const cityName = req.body.cityName;
   try {
-    const data = await fetch(
+    const cityData = await fetch(
       `${cityUrl}${cityName}&limit=1&appid=${keys.API_KEY}`,
     );
 
-    const [jsonData] = await data.json(); //destruct to object from array
+    const [jsonData] = await cityData.json(); //destruct to object from array
+
     const response = await fetch(
       `${weatherUrl}?lat=${jsonData.lat}&lon=${jsonData.lon}&units=metric&appid=${keys.API_KEY}`,
     );
