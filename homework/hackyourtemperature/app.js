@@ -24,17 +24,18 @@ app.post(path.weather, async (req, res) => {
       `${cityUrl}${cityName}&limit=1&appid=${keys.API_KEY}`,
     );
 
-    const [jsonData] = await cityData.json(); //destruct to object from array
-
+    const jsonData = await cityData.json(); //destruct to object from array
+    if (jsonData.length === 0) {
+      return res.status(404).send({ weatherText: `${cityName} is not found` });
+    }
     const response = await fetch(
-      `${weatherUrl}?lat=${jsonData.lat}&lon=${jsonData.lon}&units=metric&appid=${keys.API_KEY}`,
+      `${weatherUrl}?lat=${jsonData[0].lat}&lon=${jsonData[0].lon}&units=metric&appid=${keys.API_KEY}`,
     );
     const weatherData = await response.json();
     res.send({ weatherText: `${cityName} ${weatherData.main.temp} C` });
-
-    console.log(weatherData);
   } catch (error) {
-    res.status(404).send({ weatherText: `${cityName} is not found` });
+    console.log(error);
+    res.status(500).send("Server doesn't respond");
   }
 });
 export default app;
